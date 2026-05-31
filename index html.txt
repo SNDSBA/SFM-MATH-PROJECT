@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus in Malaysian Food Security: Palm Oil Clarification</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen p-6">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+        <header class="bg-emerald-700 text-white p-6">
+            <span class="text-xs font-semibold uppercase tracking-wider bg-emerald-800 px-3 py-1 rounded-full">SFM: Food Security & Bioscience</span>
+            <h1 class="text-3xl font-bold mt-2">Optimizing Palm Oil Clarification Rates via Derivatives</h1>
+            <p class="text-emerald-100 mt-1 text-sm">Interactive Calculus Application for Food Processing Efficiency in Malaysia</p>
+        </header>
+
+        <div class="p-6 space-y-6">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
+                    <h2 class="text-lg font-bold text-emerald-900 mb-2">The Bioscience Scenario</h2>
+                    <p class="text-sm text-emerald-800 leading-relaxed">
+                        During Crude Palm Oil (CPO) processing in Malaysian mills (e.g., Sime Darby Plantation benchmarks), separation tanks isolate pure oil from water and heavy solids. This simulation models a <strong>1,000-liter batch clarification tank</strong>. 
+                    </p>
+                    <p class="text-sm text-emerald-800 mt-2 leading-relaxed">
+                        By calculating the <strong>derivative $V'(t)$</strong>, food scientists pinpoint the exact hour of peak separation efficiency to prevent industrial food waste and lower processing energy costs.
+                    </p>
+                    <div class="mt-4 pt-3 border-t border-emerald-200 text-xs text-emerald-700">
+                        <strong>Data Baseline Reference:</strong> Malaysian Palm Oil Board (MPOB) Technical Guidelines & <em>Journal of Food Engineering</em> processing models.
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-2">Mathematical Modeling</h2>
+                        <div class="mb-3">
+                            <span class="text-xs font-semibold text-gray-500 block">Volume Function $V(t)$:</span>
+                            <code class="text-sm font-mono text-indigo-700 bg-indigo-50 px-2 py-1 rounded block mt-1">
+                                V(t) = L / (1 + e^(-k * (t - t0)))
+                            </code>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 block">Instantaneous Separation Rate $V'(t)$ (Derivative):</span>
+                            <code class="text-sm font-mono text-rose-700 bg-rose-50 px-2 py-1 rounded block mt-1">
+                                V'(t) = k * V(t) * (1 - V(t)/L)
+                            </code>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-3">
+                        Where maximum volume $L = 1000\text{L}$, growth constant $k = 0.85$, and midpoint $t_0 = 4\text{ hours}$.
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                    <h3 class="text-md font-bold text-gray-700">Interactive Clarification Profile Curve</h3>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-md mt-1 sm:mt-0">
+                        💡 <strong>Instruction:</strong> Click anywhere on the graph line to calculate the exact derivative at that hour.
+                    </span>
+                </div>
+                <div class="relative h-[320px] w-full">
+                    <canvas id="clarificationChart"></canvas>
+                </div>
+            </section>
+
+            <section id="outputPanel" class="bg-slate-900 text-slate-100 p-5 rounded-xl transition-all duration-300 transform scale-100 dynamic-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Calculus Analysis Output</div>
+                        <div class="text-xl font-bold mt-1" id="outTime">Select a data point on the chart...</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 bg-slate-800 p-3 rounded-lg border border-slate-700 text-center">
+                        <div>
+                            <span class="block text-xs text-slate-400">Yield $V(t)$</span>
+                            <span class="text-lg font-mono font-bold text-amber-400" id="outVolume">-</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-slate-400">Rate $V'(t)$</span>
+                            <span class="text-lg font-mono font-bold text-rose-400" id="outRate">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-sm text-slate-300">
+                    <strong class="text-white">What this means:</strong> <span id="outExplanation">Click a specific hour on the chart above to view the real-time breakdown of your processing efficiency.</span>
+                </div>
+            </section>
+        </div>
+        
+        <footer class="bg-gray-100 p-4 text-center text-xs text-gray-500 border-t border-gray-200">
+            Designed for Malaysian Food Security Analytics &bull; Developed via Chart.js V4
+        </footer>
+    </div>
+
+    <script>
+        // Mathematical Constants based on MPOB industrial processing averages at 90°C
+        const L = 1000;   // Max attainable clarified oil capacity (Liters)
+        const k = 0.85;   // Rate coefficient matching high-temperature separation
+        const t0 = 4.0;   // Separation midpoint inflection point (Hours)
+
+        // Generate Data Points (0 to 10 hours, steps of 0.5)
+        const timeLabels = [];
+        const volumeData = [];
+        const derivativeData = [];
+
+        for (let t = 0; t <= 10; t += 0.5) {
+            timeLabels.push(t);
+            // Logistic function V(t)
+            const V = L / (1 + Math.exp(-k * (t - t0)));
+            volumeData.push(V);
+            // First Derivative V'(t) = k * V * (1 - V/L)
+            const V_prime = k * V * (1 - (V / L));
+            derivativeData.push(V_prime);
+        }
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('clarificationChart').getContext('2d');
+        const clarificationChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Clarified Oil Volume V(t) [Liters]',
+                        data: volumeData,
+                        borderColor: '#047857', // Emerald 700
+                        backgroundColor: 'rgba(4, 120, 87, 0.05)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        yAxisID: 'yVolume',
+                        fill: true
+                    },
+                    {
+                        label: 'Separation Rate V\'(t) [L/Hour] (Derivative)',
+                        data: derivativeData,
+                        borderColor: '#be123c', // Rose 700
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        tension: 0.3,
+                        yAxisID: 'yRate',
+                        pointRadius: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Retention Time (Hours)', font: { weight: 'bold' } }
+                    },
+                    yVolume: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Total Oil Clarified (Liters)', font: { weight:
